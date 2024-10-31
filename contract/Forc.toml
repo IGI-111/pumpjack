@@ -1,0 +1,9 @@
+[project]
+authors = ["igi-111"]
+entry = "main.sw"
+license = "Apache-2.0"
+name = "pumpjack"
+
+[dependencies]
+sway_libs = { git = "https://github.com/FuelLabs/sway-libs" }
+vrf_abi = { git = "https://github.com/orao-network/fuel-vrf.git" }
