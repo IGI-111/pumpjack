@@ -8,8 +8,8 @@ import {
   CONTRACT_ID,
 } from "./constants.ts";
 import "./App.css";
-import { Pumpjack} from "./sway-api/index.ts";
-import { OutcomeOutput, OutcomeInput } from './sway-api/Pumpjack';
+import { Pumpjack } from "./sway-api/index.ts";
+import { OutcomeOutput, OutcomeInput, GameStateOutput } from './sway-api/Pumpjack';
 
 function App() {
   const { isConnected } = useIsConnected();
@@ -34,23 +34,23 @@ function App() {
   const { connect, isConnecting } = useConnectUI();
   const { disconnect } = useDisconnect();
 
-  const [gameState, setGameState] = useState();
+  const [gameState, setGameState] = useState<GameStateOutput>();
 
   const updateGameState = async () => {
     if(contract) {
       const { value } = await contract.functions.game_state(
-        { bits: wallet.address.toB256() }
+        { bits: wallet!.address.toB256() }
       ).get();
       console.log(value);
       setGameState(value);
     }
   };
 
-  const waitForVrf = async (seed) => {
+  const waitForVrf = async (seed: string) => {
     console.log("waiting for vrf for seed", seed);
     // wait until vrf is ready
     while(true){
-      const { value } = await contract.functions.vrf_ready(seed).get();
+      const { value } = await contract!.functions.vrf_ready(seed).get();
       if(value){
         break;
       }
@@ -85,7 +85,7 @@ function App() {
             const seed = randomSeed();
             const vrf_fee = await mem_vrf_fee;
             const bet = 10;
-            const call = await contract.functions.start(seed, vrf_fee, bet)
+            const call = await contract!.functions.start(seed, vrf_fee, bet)
               .callParams({ forward: [vrf_fee + bet, wallet.provider.getBaseAssetId()] })
               .call();
             // const commit_res = await call.waitForResult()
@@ -95,7 +95,7 @@ function App() {
           <Button onPress={async () => {
             const seed = randomSeed();
             const vrf_fee = await mem_vrf_fee;
-            const call = await contract.functions.hit(seed, vrf_fee)
+            const call = await contract!.functions.hit(seed, vrf_fee)
               .callParams({ forward: [vrf_fee, wallet.provider.getBaseAssetId()] })
               .call();
             // const commit_res = await call.waitForResult()
@@ -105,7 +105,7 @@ function App() {
           <Button onPress={async () => {
             const seed = randomSeed();
             const vrf_fee = await mem_vrf_fee;
-            const call = await contract.functions.stand(seed, vrf_fee)
+            const call = await contract!.functions.stand(seed, vrf_fee)
               .callParams({ forward: [vrf_fee, wallet.provider.getBaseAssetId()] })
               .call();
             // const commit_res = await call.waitForResult()
@@ -113,10 +113,10 @@ function App() {
             await updateGameState();
           }}>Stand</Button>
           <Button onPress={async () => {
-            const outcome = convertOutcome(gameState.outcome);
+            const outcome = convertOutcome(gameState!.outcome);
             console.log(outcome);
   
-            const call = await contract.functions.redeem(outcome)
+            const call = await contract!.functions.redeem(outcome)
               .call();
             console.log(call);
             const commit_res = await call.waitForResult();
@@ -138,15 +138,10 @@ function App() {
 
 export default App;
 
-
-function updateGameState() {
-
-}
-
-const genRanHex = size => [...Array(size)].map(() => Math.floor(Math.random() * 16).toString(16)).join('');
+const genRanHex = (size: number) => [...Array(size)].map(() => Math.floor(Math.random() * 16).toString(16)).join('');
 const randomSeed = () => `0x${genRanHex(64)}`.toString();
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
-const renderCards = (bytes): string => {
+const renderCards = (bytes: any): string => {
   let res = "";
   for(const b of bytes) {
     if(b === 0) {

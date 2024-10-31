@@ -60,7 +60,7 @@ const FUEL_CONFIG = createFuelConfig(() => {
   const fueletWalletConnector = new FueletWalletConnector();
   const fuelWalletConnector = new FuelWalletConnector();
   const bakoSafeConnector = new BakoSafeConnector();
-  const burnerWalletConnector = new BurnerWalletConnector({ fuelProvider });
+  // const burnerWalletConnector = new BurnerWalletConnector({ fuelProvider });
   // const walletConnectConnector = new WalletConnectConnector({
   //   projectId: WalletConnectProjectId,
   //   wagmiConfig: wagmiConfig as WagmiConfig,
@@ -78,7 +78,7 @@ const FUEL_CONFIG = createFuelConfig(() => {
       fueletWalletConnector,
       // walletConnectConnector,
       // solanaConnector,
-      burnerWalletConnector,
+      // burnerWalletConnector,
       ...(isMobile ? [] : [fuelWalletConnector, bakoSafeConnector]),
     ],
   };
