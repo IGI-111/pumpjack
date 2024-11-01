@@ -5,5 +5,5 @@ import react from "@vitejs/plugin-react";
 export default defineConfig({
   plugins: [react()],
   // FIXME needed for github.io setup
-  base: '/pumpjack/'
+  // base: '/pumpjack/'
 });
